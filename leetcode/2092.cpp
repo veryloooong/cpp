@@ -2,7 +2,7 @@
 
 using namespace std;
 
-struct dsu {
+struct DSU {
 private:
   vector<int> parent;
   vector<int> sz;
@@ -12,7 +12,7 @@ private:
   }
 
 public:
-  dsu(int n) : parent(n), sz(n) {
+  DSU(int n) : parent(n), sz(n) {
     for (int i = 0; i < n; ++i) {
       parent[i] = i;
       sz[i]++;
@@ -49,7 +49,7 @@ vector<int> find_all_people(int n, vector<vector<int>> &meetings,
     times[meeting[2]].push_back({meeting[0], meeting[1]});
   }
 
-  dsu dsu(n);
+  DSU dsu(n);
   dsu.union_sets(0, firstPerson);
 
   for (const auto &[_, pairs] : times) {
