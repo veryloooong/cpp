@@ -5,15 +5,13 @@ using namespace std;
 typedef int64_t ll;
 
 struct DSU {
-private:
+ private:
   vector<int> parent;
   vector<size_t> sz;
 
-  int find_set(int u) {
-    return u == parent[u] ? u : parent[u] = find_set(parent[u]);
-  }
+  int find_set(int u) { return u == parent[u] ? u : parent[u] = find_set(parent[u]); }
 
-public:
+ public:
   DSU(size_t n) : parent(n), sz(n, 1) {
     for (size_t i = 0; i < n; ++i) {
       parent[i] = i;
@@ -29,8 +27,7 @@ public:
     int b = find_set(v);
 
     if (a != b) {
-      if (sz[a] < sz[b])
-        swap(a, b);
+      if (sz[a] < sz[b]) swap(a, b);
       parent[b] = a;
       sz[a] += sz[b];
     }
@@ -38,7 +35,7 @@ public:
 };
 
 class Solution {
-public:
+ public:
   bool canTraverseAllPairs(vector<int> &nums) {
     const auto n = nums.size();
     const auto max_num = std::ranges::max(nums);
@@ -59,25 +56,22 @@ public:
     }
 
     for (size_t i = 0; i < n; ++i)
-      if (dsu.get_size(i) == n)
-        return true;
+      if (dsu.get_size(i) == n) return true;
 
     return false;
   }
 
-private:
+ private:
   // Get the minimum prime factor of a list of numbers from 2 to n (e.g.
   // `eratosthenes[12] = 2`)
   vector<ll> eratosthenes(int n) {
     vector<ll> min_prime_factors(n + 1);
 
-    for (int i = 2; i <= n; ++i)
-      min_prime_factors[i] = i;
+    for (int i = 2; i <= n; ++i) min_prime_factors[i] = i;
 
     for (ll i = 2; i * i <= n; ++i)
       if (min_prime_factors[i] == i)
-        for (ll j = i * i; j < n; j += i)
-          min_prime_factors[j] = min(min_prime_factors[j], i);
+        for (ll j = i * i; j < n; j += i) min_prime_factors[j] = min(min_prime_factors[j], i);
 
     return min_prime_factors;
   }
@@ -88,8 +82,7 @@ private:
     while (n > 1) {
       const auto factor = min_prime_factors[n];
       prime_factors.push_back(factor);
-      while (n % factor == 0)
-        n /= factor;
+      while (n % factor == 0) n /= factor;
     }
 
     return prime_factors;
