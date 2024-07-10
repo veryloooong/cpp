@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -9,3 +10,5 @@ public:
     return 0;
   }
 };
+
+int main() { return 0; }
