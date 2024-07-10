@@ -1,5 +1,6 @@
 /.vscode
+**/*.ilk
+**/*.pdb
+**/*.exe
 
 compile_flags.txt
-
-main
