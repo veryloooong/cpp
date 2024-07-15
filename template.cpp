@@ -26,7 +26,7 @@ static constexpr ull ct_sqrt(ull res, ull l, ull r) {
 static constexpr ull ct_sqrt(ull res) { return ct_sqrt(res, 1, res); } // NOLINT
 
 // Binary exponential
-constexpr ull expo(ull base, ull exponent) {
+ull expo(ull base, ull exponent) {
   ull result = 1;
 
   while (exponent > 0) {
