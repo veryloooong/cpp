@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <array>
+#include <iostream>
 
 using namespace std;
 
