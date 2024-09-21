@@ -1,7 +1,8 @@
 #include <iostream>
-#include <ostream>
+#include <vector>
 
 int main() {
-  int a = 0;
-  std::cout << (a + 3) % 4 << std::endl;
+  std::vector<int> hehe{};
+
+  std::cout << hehe.max_size() << std::endl;
 }

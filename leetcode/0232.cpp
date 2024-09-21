@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <cstdint>
+#include <vector>
 
 using namespace std;
 
@@ -74,20 +75,5 @@ public:
   }
   bool empty() { return vector_main.empty() && vector_help.empty(); }
 };
-
-int main() {
-  ios_base::sync_with_stdio(false);
-  cin.tie(nullptr);
-  cout.tie(nullptr);
-
-  MyQueue q;
-  q.push(1);
-  q.push(2);
-  q.push(3);
-
-  cout << q.peek();
-
-  return 0;
-}
 
 /* uuuuuuuuuuuuuuu - Ceres Fauna (2021 - ) */
