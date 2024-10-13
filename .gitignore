@@ -4,4 +4,6 @@
 **/*.exe
 **/*.obj
 
+/test*
+
 compile_flags.txt
