@@ -3,12 +3,14 @@
 
 using namespace std;
 
-typedef int64_t ll;
-typedef uint64_t ull;
+typedef int32_t i32;
+typedef uint32_t u32;
+typedef int64_t i64;
+typedef uint64_t u64;
 
-constexpr ll MOD = 1e9 + 7; // NOLINT
+constexpr i64 MOD = 1e9 + 7; // NOLINT
 
-static constexpr ull ct_sqrt(ull res, ull l, ull r) {
+static constexpr u64 ct_sqrt(u64 res, u64 l, u64 r) {
   if (l == r) {
     return r;
   } else {
@@ -23,11 +25,11 @@ static constexpr ull ct_sqrt(ull res, ull l, ull r) {
 }
 
 // Compile-time square root
-static constexpr ull ct_sqrt(ull res) { return ct_sqrt(res, 1, res); } // NOLINT
+static constexpr u64 ct_sqrt(u64 res) { return ct_sqrt(res, 1, res); } // NOLINT
 
 // Binary exponential
-ull expo(ull base, ull exponent) {
-  ull result = 1;
+u64 expo(u64 base, u64 exponent) {
+  u64 result = 1;
 
   while (exponent > 0) {
     if (exponent & 1) {
@@ -43,6 +45,17 @@ int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(nullptr);
   cout.tie(nullptr);
+
+  int n;
+  cin >> n;
+  int sum = 0;
+  for (int i = 0; i < n; i++) {
+    int x;
+    cin >> x;
+    sum += x;
+  }
+
+  cout << sum << endl;
 
   return 0;
 }
