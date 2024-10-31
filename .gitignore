@@ -3,6 +3,8 @@
 **/*.pdb
 **/*.exe
 **/*.obj
+**/*.exp
+**/*.lib
 
 /test*
 
