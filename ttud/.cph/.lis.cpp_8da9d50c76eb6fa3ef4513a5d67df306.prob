@@ -1,0 +1,1 @@
+{"name":"Local: lis","url":"c:\\Users\\Long\\Repos\\cpp\\ttud\\lis.cpp","tests":[{"id":1731403514676,"input":"6\n5 8 2 8 10 10","output":"3"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\Long\\Repos\\cpp\\ttud\\lis.cpp","group":"local","local":true}
