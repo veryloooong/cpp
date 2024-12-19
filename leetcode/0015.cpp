@@ -22,8 +22,34 @@ private:
 
 public:
   std::vector<std::vector<int>> threeSum(std::vector<int> &nums) {
+    const int n = nums.size();
+    if (n < 3)
+      return {{}};
     std::sort(nums.begin(), nums.end());
+    std::vector<std::vector<int>> ans{};
 
-    // TODO
+    for (int i = 0; i < n - 2; i++) {
+      if (i > 0 && nums[i] == nums[i - 1])
+        continue;
+
+      int lhs = i + 1;
+      int rhs = n - 1;
+      while (lhs < rhs) {
+        const int sum = nums[i] + nums[lhs] + nums[rhs];
+        if (sum > 0)
+          rhs--;
+        else if (sum < 0)
+          lhs++;
+        else {
+          ans.push_back({nums[i], nums[lhs++], nums[rhs--]});
+          while (lhs < rhs && nums[lhs] == nums[lhs - 1])
+            lhs++;
+          while (lhs < rhs && nums[rhs] == nums[rhs + 1])
+            rhs--;
+        }
+      }
+    }
+
+    return ans;
   }
 };

@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -37,9 +38,15 @@ struct yn_tf : numpunct<char> {
 };
 
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  i64 P, N, R;
+  cin >> P >> N >> R;
+  i64 days = 0, ans = N, inf = N;
+  while (ans <= P) {
+    days++;
+    inf = inf * R;
+    ans = ans + inf;
+  }
+  cout << days;
 }
 
 int main() {

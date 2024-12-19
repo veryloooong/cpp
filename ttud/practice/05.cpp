@@ -1,7 +1,9 @@
-#include <chrono>
 #include <cstdint>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -12,41 +14,54 @@ typedef int64_t i64;
 typedef uint64_t u64;
 
 constexpr i64 MOD = 1e9 + 7; // NOLINT
+
 const char *inf = "input.txt";
 const char *outf = "output.txt";
-const char *expected = "expected.txt";
-
-template <typename T1, typename T2>
-ostream &operator<<(ostream &os, const pair<T1, T2> &p) {
-  os << '(' << p.first << ',' << p.second << ')';
-  return os;
-}
-template <typename T> ostream &operator<<(ostream &os, const vector<T> &arr) {
-  os << '[';
-  for (int i = 0, n = arr.size(); i < n; i++) {
-    os << arr[i] << (i < n - 1 ? ", " : "");
-  }
-  os << ']';
-
-  return os;
-}
 
 struct yn_tf : numpunct<char> {
   string do_truename() const { return "YES"; }
   string do_falsename() const { return "NO"; }
 };
 
-void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+template <typename T1, typename T2>
+ostream &operator<<(ostream &os, const pair<T1, T2> &p) {
+  os << '(' << p.first << ',' << p.second << ')';
+  return os;
+}
+
+template <typename T> ostream &operator<<(ostream &os, const vector<T> &arr) {
+  os << '[';
+  for (int i = 0, n = arr.size(); i < n; i++) {
+    os << arr[i] << (i < n - 1 ? ", " : "");
+  }
+  os << ']';
+  return os;
+}
+
+bool solve() {
+  int n, k;
+  cin >> n >> k;
+  map<i64, i64> dist_hp;
+  vector<i64> hps(n);
+  for (i64 &hp : hps)
+    cin >> hp;
+  for (int i = 0; i < n; i++) {
+    i64 x;
+    cin >> x;
+    dist_hp[abs(x)] += hps[i];
+  }
+
+  i64 cur = 0;
+  for (const auto &[dist, hp] : dist_hp) {
+    cur += hp;
+    if (dist * k < cur)
+      return false;
+  }
+
+  return true;
 }
 
 int main() {
-  ios_base::sync_with_stdio(false);
-  cin.tie(nullptr);
-  cout.tie(nullptr);
-
 #ifndef ONLINE_JUDGE
   ifstream in(inf);
   ofstream out(outf);
@@ -55,25 +70,15 @@ int main() {
     cin.rdbuf(in.rdbuf());
     cout.rdbuf(out.rdbuf());
   }
-#endif
+#endif // ONLINE_JUDGE
 
   cout.imbue(locale(cout.getloc(), new yn_tf));
   cout << boolalpha;
-  cerr << boolalpha;
 
-#ifndef ONLINE_JUDGE
-  auto start = chrono::high_resolution_clock::now();
-#endif
-
-  solve();
-
-#ifndef ONLINE_JUDGE
-  auto end = chrono::high_resolution_clock::now();
-  auto elapsed = end - start;
-  cerr << "runtime: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-       << " ms" << endl;
-#endif
+  int t;
+  cin >> t;
+  while (t--)
+    cout << solve() << '\n';
 
   return 0;
 }

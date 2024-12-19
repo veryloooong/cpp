@@ -1,4 +1,4 @@
-#include <chrono>
+#include <array>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -12,15 +12,16 @@ typedef int64_t i64;
 typedef uint64_t u64;
 
 constexpr i64 MOD = 1e9 + 7; // NOLINT
+
 const char *inf = "input.txt";
 const char *outf = "output.txt";
-const char *expected = "expected.txt";
 
 template <typename T1, typename T2>
 ostream &operator<<(ostream &os, const pair<T1, T2> &p) {
   os << '(' << p.first << ',' << p.second << ')';
   return os;
 }
+
 template <typename T> ostream &operator<<(ostream &os, const vector<T> &arr) {
   os << '[';
   for (int i = 0, n = arr.size(); i < n; i++) {
@@ -36,17 +37,25 @@ struct yn_tf : numpunct<char> {
   string do_falsename() const { return "NO"; }
 };
 
+array<int, 1000002> dp;
+
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  int n, k;
+  cin >> n >> k;
+  vector<int> c(n);
+  for (int &x : c)
+    cin >> x;
+  dp[0] = 1;
+  for (int t = 1; t <= k; t++) {
+    for (int &x : c) {
+      if (t >= x)
+        dp[t] = (dp[t] + dp[t - x]) % MOD;
+    }
+  }
+  cout << dp[k];
 }
 
 int main() {
-  ios_base::sync_with_stdio(false);
-  cin.tie(nullptr);
-  cout.tie(nullptr);
-
 #ifndef ONLINE_JUDGE
   ifstream in(inf);
   ofstream out(outf);
@@ -59,21 +68,8 @@ int main() {
 
   cout.imbue(locale(cout.getloc(), new yn_tf));
   cout << boolalpha;
-  cerr << boolalpha;
-
-#ifndef ONLINE_JUDGE
-  auto start = chrono::high_resolution_clock::now();
-#endif
 
   solve();
-
-#ifndef ONLINE_JUDGE
-  auto end = chrono::high_resolution_clock::now();
-  auto elapsed = end - start;
-  cerr << "runtime: "
-       << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-       << " ms" << endl;
-#endif
 
   return 0;
 }

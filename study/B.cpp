@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 using namespace std;
@@ -36,10 +38,23 @@ struct yn_tf : numpunct<char> {
   string do_falsename() const { return "NO"; }
 };
 
+struct Cell {
+  int val;
+  Cell *parent;
+
+  Cell(int val, Cell *parent) : val(val), parent(parent) {}
+};
+
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  int n, m;
+  cin >> n >> m;
+  vector<vector<string>> grid(n, vector<string>(m));
+  unordered_map<string, Cell> cells;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      cin >> grid[i][j];
+    }
+  }
 }
 
 int main() {

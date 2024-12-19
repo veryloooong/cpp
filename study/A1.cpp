@@ -31,15 +31,50 @@ template <typename T> ostream &operator<<(ostream &os, const vector<T> &arr) {
   return os;
 }
 
+bool compare_files(const std::string &s1, const std::string &s2) {
+  std::ifstream f1(s1, std::ifstream::binary | std::ifstream::ate);
+  std::ifstream f2(s2, std::ifstream::binary | std::ifstream::ate);
+
+  if (f1.fail() || f2.fail()) {
+    return false; // file problem
+  }
+  if (f1.tellg() != f2.tellg()) {
+    return false; // size mismatch
+  }
+  // seek back to beginning and use std::equal to compare contents
+  f1.seekg(0, std::ifstream::beg);
+  f2.seekg(0, std::ifstream::beg);
+  return std::equal(std::istreambuf_iterator<char>(f1.rdbuf()),
+                    std::istreambuf_iterator<char>(),
+                    std::istreambuf_iterator<char>(f2.rdbuf()));
+}
+
 struct yn_tf : numpunct<char> {
   string do_truename() const { return "YES"; }
   string do_falsename() const { return "NO"; }
 };
 
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  string a, b;
+  cin >> a >> b;
+
+  int carry = 0;
+  string result;
+  int n1 = a.size(), n2 = b.size();
+  int i = n1 - 1, j = n2 - 1;
+
+  while (i >= 0 || j >= 0 || carry) {
+    int sum = carry;
+    if (i >= 0)
+      sum += a[i--] - '0';
+    if (j >= 0)
+      sum += b[j--] - '0';
+    carry = sum / 10;
+    result.push_back(sum % 10 + '0');
+  }
+
+  reverse(result.begin(), result.end());
+  cout << result << endl;
 }
 
 int main() {

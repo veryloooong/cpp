@@ -31,15 +31,40 @@ template <typename T> ostream &operator<<(ostream &os, const vector<T> &arr) {
   return os;
 }
 
+bool compare_files(const std::string &s1, const std::string &s2) {
+  std::ifstream f1(s1, std::ifstream::binary | std::ifstream::ate);
+  std::ifstream f2(s2, std::ifstream::binary | std::ifstream::ate);
+
+  if (f1.fail() || f2.fail()) {
+    return false; // file problem
+  }
+  if (f1.tellg() != f2.tellg()) {
+    return false; // size mismatch
+  }
+  // seek back to beginning and use std::equal to compare contents
+  f1.seekg(0, std::ifstream::beg);
+  f2.seekg(0, std::ifstream::beg);
+  return std::equal(std::istreambuf_iterator<char>(f1.rdbuf()),
+                    std::istreambuf_iterator<char>(),
+                    std::istreambuf_iterator<char>(f2.rdbuf()));
+}
+
 struct yn_tf : numpunct<char> {
   string do_truename() const { return "YES"; }
   string do_falsename() const { return "NO"; }
 };
 
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  string s, pattern;
+  cin >> s >> pattern;
+  int cnt = 0;
+  size_t start = 0, end, len = pattern.length();
+  while ((end = s.find(pattern, start)) != string::npos) {
+    cnt++;
+    start = end + len;
+  }
+
+  cout << cnt;
 }
 
 int main() {
@@ -73,6 +98,8 @@ int main() {
   cerr << "runtime: "
        << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
        << " ms" << endl;
+
+  cerr << compare_files(outf, expected) << endl;
 #endif
 
   return 0;
