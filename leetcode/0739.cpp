@@ -1,5 +1,5 @@
-#include <algorithm>
 #include <cstdint>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -21,20 +21,20 @@ private:
   typedef uint64_t u64;
 
 public:
-  int trap(std::vector<int> &height) {
-    const int n = height.size();
-    std::vector<int> lhs(n, height.front()), rhs(n, height.back());
-    int ans = 0;
+  std::vector<int> dailyTemperatures(std::vector<int> &temperatures) {
+    const int n = temperatures.size();
+    std::vector<int> ans(n);
+    std::stack<int> stack;
 
-    // left
-    for (int i = 1; i < n; i++)
-      lhs[i] = std::max(height[i], lhs[i - 1]);
+    for (int j = 0; j < n; j++) {
+      while (!stack.empty() && temperatures[stack.top()] < temperatures[j]) {
+        const int i = stack.top();
+        stack.pop();
+        ans[i] = j - i;
+      }
 
-    for (int i = n - 2; i >= 0; i--)
-      rhs[i] = std::max(height[i], rhs[i + 1]);
-
-    for (int i = 0; i < n; i++)
-      ans += std::min(lhs[i], rhs[i]) - height[i];
+      stack.push(j);
+    }
 
     return ans;
   }

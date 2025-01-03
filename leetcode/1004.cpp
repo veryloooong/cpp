@@ -21,21 +21,16 @@ private:
   typedef uint64_t u64;
 
 public:
-  int trap(std::vector<int> &height) {
-    const int n = height.size();
-    std::vector<int> lhs(n, height.front()), rhs(n, height.back());
-    int ans = 0;
-
-    // left
-    for (int i = 1; i < n; i++)
-      lhs[i] = std::max(height[i], lhs[i - 1]);
-
-    for (int i = n - 2; i >= 0; i--)
-      rhs[i] = std::max(height[i], rhs[i + 1]);
-
-    for (int i = 0; i < n; i++)
-      ans += std::min(lhs[i], rhs[i]) - height[i];
-
-    return ans;
+  int longestOnes(std::vector<int> &nums, int k) {
+    int lhs = 0, rhs = 0, zeros = 0, n = nums.size(), best = 0;
+    while (rhs < n) {
+      zeros += (nums[rhs] == 0);
+      while (lhs <= rhs && zeros > k) {
+        zeros -= (nums[lhs++] == 0);
+      }
+      best = std::max(best, rhs - lhs + 1);
+      rhs++;
+    }
+    return best;
   }
 };

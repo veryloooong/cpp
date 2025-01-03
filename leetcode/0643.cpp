@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstdint>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -21,21 +22,14 @@ private:
   typedef uint64_t u64;
 
 public:
-  int trap(std::vector<int> &height) {
-    const int n = height.size();
-    std::vector<int> lhs(n, height.front()), rhs(n, height.back());
-    int ans = 0;
+  double findMaxAverage(std::vector<int> &nums, int k) {
+    double acc = std::accumulate(nums.begin(), nums.begin() + k, 0.0);
+    double best = acc;
+    for (size_t i = k; i < nums.size(); i++) {
+      acc = acc + nums[i] - nums[i - k];
+      best = std::max(best, acc);
+    }
 
-    // left
-    for (int i = 1; i < n; i++)
-      lhs[i] = std::max(height[i], lhs[i - 1]);
-
-    for (int i = n - 2; i >= 0; i--)
-      rhs[i] = std::max(height[i], rhs[i + 1]);
-
-    for (int i = 0; i < n; i++)
-      ans += std::min(lhs[i], rhs[i]) - height[i];
-
-    return ans;
+    return best / k;
   }
 };

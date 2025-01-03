@@ -21,20 +21,18 @@ private:
   typedef uint64_t u64;
 
 public:
-  int trap(std::vector<int> &height) {
-    const int n = height.size();
-    std::vector<int> lhs(n, height.front()), rhs(n, height.back());
-    int ans = 0;
-
-    // left
-    for (int i = 1; i < n; i++)
-      lhs[i] = std::max(height[i], lhs[i - 1]);
-
-    for (int i = n - 2; i >= 0; i--)
-      rhs[i] = std::max(height[i], rhs[i + 1]);
-
-    for (int i = 0; i < n; i++)
-      ans += std::min(lhs[i], rhs[i]) - height[i];
+  int maxScore(std::string s) {
+    int n = s.size();
+    std::vector<int> suffix(s.size());
+    suffix.back() = (s.back() == '1');
+    for (int i = n - 2; i >= 0; i--) {
+      suffix[i] = suffix[i + 1] + (s[i] == '1');
+    }
+    int zeros = 0, ans = 0;
+    for (int i = 0; i < n - 1; i++) {
+      zeros += (s[i] == '0');
+      ans = std::max(ans, zeros + suffix[i + 1]);
+    }
 
     return ans;
   }

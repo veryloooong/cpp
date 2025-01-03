@@ -32,7 +32,7 @@ void mins_init() {
   }
 }
 
-bool check(int i) {
+bool Check(int i) {
   if (visited[i])
     return false;
   if (i > n) {
@@ -52,7 +52,7 @@ void update(int stop) {
 
 void backtrack_try(int i) {
   for (int next_stop = 1; next_stop <= 2 * n; next_stop++) {
-    if (check(next_stop)) {
+    if (Check(next_stop)) {
       stops[i] = next_stop;
       visited[next_stop] = 1;
       current_dist += distances[stops[i - 1]][next_stop];
