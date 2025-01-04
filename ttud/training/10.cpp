@@ -86,7 +86,7 @@ void solve() {
     cin >> x;
 
   vector<i64> sorted(arr);
-  sort(sorted.begin(), sorted.end(), greater<i64>());
+  sort(sorted.begin(), sorted.end());
   unordered_map<int, int> compress;
   int at = 0;
   for (int i : sorted) {
