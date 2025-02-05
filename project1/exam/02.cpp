@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <fstream>
@@ -37,9 +38,26 @@ struct yn_tf : numpunct<char> {
 };
 
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  int n;
+  cin >> n;
+  vector<int> a(n);
+  for (int &x : a)
+    cin >> x;
+
+  if (n == 1)
+    cout << a[0] << endl;
+  else if (n == 2)
+    cout << a[0] + a[1] << endl;
+
+  vector<int> dp(n);
+  dp[0] = a[0];
+  dp[1] = a[0] + a[1];
+  dp[2] = max({dp[1], a[0] + a[2], a[1] + a[2]});
+  for (int i = 3; i < n; i++) {
+    // bo i hoac bo i - 1 hoac bo i - 2 va lay 2 cai gan nhat
+    dp[i] = max({dp[i - 1], dp[i - 2] + a[i], dp[i - 3] + a[i - 1] + a[i]});
+  }
+  cout << dp.back() << endl;
 }
 
 int main() {

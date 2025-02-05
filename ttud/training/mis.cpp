@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <unordered_set>
 #include <vector>
 
 using namespace std;
@@ -37,9 +39,18 @@ struct yn_tf : numpunct<char> {
 };
 
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  int N;
+  cin >> N;
+  vector<int> w(N + 1);
+  vector<unordered_set<int>> adj;
+  for (int i = 1; i <= N; i++)
+    cin >> w[i];
+  for (int i = 1; i <= N - 1; i++) {
+    int u, v;
+    cin >> u >> v;
+    adj[u].insert(v);
+    adj[v].insert(u);
+  }
 }
 
 int main() {
@@ -78,7 +89,4 @@ int main() {
   return 0;
 }
 
-/*
- * "uuuuuuuuuuuuuuu" - Ceres Fauna (2021 - 2025)
- * imissfauna.com
- */
+/* uuuuuuuuuuuuuuu - Ceres Fauna (2021 - ) */

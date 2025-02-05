@@ -1,76 +1,125 @@
-from heapq import heappush, heappop
-from collections import defaultdict, deque
+import flask
+import os
 
-def min_cost_to_reach_city(n, m, bus_info, roads):
-    # Tạo đồ thị
-    graph = defaultdict(list)
-    for u, v in roads:
-        graph[u].append(v)
-        graph[v].append(u)
-    
-    # Dijkstra-like BFS
-    pq = []  # Priority queue: (current_cost, current_city, current_bus)
-    dist = [[float('inf')] * (n + 1) for _ in range(n + 1)]  # dist[city][bus]: Chi phí tối thiểu đến city bằng bus
-    
-    # Khởi tạo tại thành phố 1 với xe buýt 1
-    dist[1][1] = bus_info[0][0]  # Giá khởi đầu khi dùng bus tại thành phố 1
-    heappush(pq, (bus_info[0][0], 1, 1))  # Chi phí, thành phố, xe buýt đang sử dụng
+app = flask.Flask(__name__)
 
-    while pq:
-        current_cost, city, bus = heappop(pq)
-        
-        # Bỏ qua trạng thái không tối ưu
-        if current_cost > dist[city][bus]:
-            continue
 
-        # Lấy thông tin của tuyến buýt hiện tại
-        bus_cost, max_range = bus_info[bus - 1]  # bus - 1 vì danh sách bus_info bắt đầu từ 0
-        
-        # BFS trong phạm vi của bus
-        visited = set()
-        queue = deque([(city, 0)])  # (current_city, distance_traveled)
-        while queue:
-            u, distance = queue.popleft()
-            if u in visited or distance > max_range:
-                continue
-            visited.add(u)
-            for v in graph[u]:
-                if v not in visited:
-                    queue.append((v, distance + 1))
-                
-                # Cập nhật chi phí khi đến v bằng cùng tuyến buýt
-                if current_cost < dist[v][bus]:
-                    dist[v][bus] = current_cost
-                    heappush(pq, (current_cost, v, bus))
+flag = open("/flag").read().strip() if os.geteuid() == 0 else "pwn.college{fake_flag}"
 
-        # Thử đổi xe buýt tại thành phố hiện tại
-        if current_cost + bus_info[city - 1][0] < dist[city][city]:
-            new_cost = current_cost + bus_info[city - 1][0]
-            dist[city][city] = new_cost
-            heappush(pq, (new_cost, city, city))
-    
-    # Kết quả: Tìm chi phí nhỏ nhất để đến thành phố n bằng bất kỳ tuyến buýt nào
-    return min(dist[n])
+import sqlite3
+import tempfile
 
-# Input example
-n = 6
-m = 6
-bus_info = [
-    (10, 2),  # C[1], D[1]
-    (30, 1),  # C[2], D[2]
-    (50, 1),  # C[3], D[3]
-    (20, 3),  # C[4], D[4]
-    (30, 1),  # C[5], D[5]
-    (20, 1)   # C[6], D[6]
-]
-roads = [
-    (1, 2),
-    (1, 3),
-    (1, 5),
-    (2, 4),
-    (2, 5),
-    (4, 6)
-]
 
-# Output
-print(min_cost_to_reach_city(n, m, bus_info, roads))  # Output: 30
+class TemporaryDB:
+    def __init__(self):
+        self.db_file = tempfile.NamedTemporaryFile("x", suffix=".db")
+
+    def execute(self, sql, parameters=()):
+        connection = sqlite3.connect(self.db_file.name)
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
+        result = cursor.execute(sql, parameters)
+        connection.commit()
+        return result
+
+
+db = TemporaryDB()
+
+# https://www.sqlite.org/lang_createtable.html
+db.execute("""CREATE TABLE posts AS SELECT ? AS content, "admin" AS author, FALSE AS published""", [flag])
+db.execute("""CREATE TABLE users AS SELECT "admin" AS username, ? as password""", [flag[-20:]])
+# https://www.sqlite.org/lang_insert.html
+db.execute("""INSERT INTO users SELECT "guest" as username, "password" as password""")
+db.execute("""INSERT INTO users SELECT "hacker" as username, "1337" as password""")
+
+
+@app.route("/login", methods=["POST"])
+def challenge_login():
+    username = flask.request.form.get("username")
+    password = flask.request.form.get("password")
+    if not username:
+        flask.abort(400, "Missing `username` form parameter")
+    if not password:
+        flask.abort(400, "Missing `password` form parameter")
+
+    # https://www.sqlite.org/lang_select.html
+    user = db.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password)).fetchone()
+    if not user:
+        flask.abort(403, "Invalid username or password")
+
+    response = flask.redirect("/")
+    response.set_cookie("auth", username + "|" + password)
+    return response
+
+
+@app.route("/draft", methods=["POST"])
+def challenge_draft():
+    username, password = flask.request.cookies.get("auth", "|").split("|")
+    user = db.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password)).fetchone()
+    if not user:
+        flask.abort(403, "Invalid username or password")
+
+    if username == "admin":
+        flask.abort(400, "pwnpost no longer supports admin posting due to rampant flag disclosure")
+    content = flask.request.form.get("content", "")
+    # https://www.sqlite.org/lang_insert.html
+    db.execute(
+        "INSERT INTO posts (content, author, published) VALUES (?, ?, ?)",
+        (content, username, bool(flask.request.form.get("publish"))),
+    )
+    return flask.redirect("/")
+
+
+@app.route("/publish", methods=["POST"])
+def challenge_publish():
+    username, password = flask.request.cookies.get("auth", "|").split("|")
+    user = db.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password)).fetchone()
+    if not user:
+        flask.abort(403, "Invalid username or password")
+
+    if username == "admin":
+        flask.abort(400, "pwnpost no longer supports admin posting due to rampant flag disclosure")
+    # https://www.sqlite.org/lang_update.html
+    db.execute("UPDATE posts SET published = TRUE WHERE author = ?", [username])
+    return flask.redirect("/")
+
+
+@app.route("/", methods=["GET"])
+def challenge_get():
+    page = "<html><body>\nWelcome to pwnpost, now with users!<hr>\n"
+    username, password = flask.request.cookies.get("auth", "|").split("|")
+    user = db.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password)).fetchone()
+    if user:
+        page += """
+            <form action=draft method=post>
+              Post:<textarea name=content>Write something!</textarea>
+              <input type=checkbox name=publish>Publish
+              <input type=submit value=Save>
+            </form><br>
+            <form action=publish method=post><input type=submit value="Publish All Drafts"></form>
+            <hr>
+        """
+
+        for post in db.execute("SELECT * FROM posts").fetchall():
+            page += f"""<h2>Author: {post["author"]}</h2>"""
+            if post["published"]:
+                page += post["content"] + "<hr>\n"
+            elif post["author"] == username:
+                page += "<b>YOUR DRAFT POST:</b> " + post["content"] + "<hr>\n"
+            else:
+                page += f"""(Draft post, showing first 12 characters):<br>{post["content"][:12]}<hr>"""
+    else:
+        page += """
+            <form action=login method=post>
+              Username:<input type=text name=username>
+              Password:<input type=text name=password>
+              <input type=submit name=submit value=Login>
+            </form><hr>
+        """
+
+    return page + "</body></html>"
+
+
+app.secret_key = os.urandom(8)
+app.config["SERVER_NAME"] = f"challenge.localhost:80"
+app.run("challenge.localhost", 80)

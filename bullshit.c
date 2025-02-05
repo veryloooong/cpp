@@ -1,9 +1,13 @@
+#include <assert.h>
 #include <stdio.h>
 
-inline int calc(int x) { return x + 3; }
+inline int f(int x) {
+  static int a = 10;
+  return x + a;
+}
 
-int main(void) {
-  int i = 10, j = 0;
-  if (i || (j = i + 10))
-    printf("%d", j);
+int main() {
+  int x, y = 5, z = 10;
+  x = y++ + 2 * (y + z) + ++z;
+  printf(" x= %d y= %d  z= %d ", x, y, z);
 }

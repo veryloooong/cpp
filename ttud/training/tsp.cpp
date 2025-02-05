@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <fstream>
@@ -36,10 +37,54 @@ struct yn_tf : numpunct<char> {
   string do_falsename() const { return "NO"; }
 };
 
+int N, Cmin;
+vector<vector<int>> c;
+vector<bool> visited;
+vector<int> path;
+int cur = 0, best = INT_MAX;
+
+bool Check(int k, int v) {
+  if (visited[v])
+    return false;
+  if (cur + c[path[k - 1]][v] > best)
+    return false;
+
+  return true;
+}
+
+void Try(int k) {
+  for (int v = 1; v <= N; v++) {
+    if (Check(k, v)) {
+      path[k] = v;
+      visited[v] = true;
+      cur += c[path[k - 1]][v];
+
+      if (k == N)
+        best = min(cur, best);
+      else if (cur + (N - k) * Cmin > best)
+        Try(k + 1);
+
+      cur -= c[path[k - 1]][v];
+      visited[v] = false;
+    }
+  }
+}
+
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  cin >> N;
+  c.resize(N + 1, vector<int>(N + 1));
+  visited.resize(N + 1);
+  path.resize(N + 1);
+
+  for (int i = 1; i <= N; i++) {
+    for (int j = 1; j <= N; j++) {
+      cin >> c[i][j];
+      if (i != j)
+        Cmin = min(Cmin, c[i][j]);
+    }
+  }
+
+  Try(1);
 }
 
 int main() {
@@ -78,7 +123,4 @@ int main() {
   return 0;
 }
 
-/*
- * "uuuuuuuuuuuuuuu" - Ceres Fauna (2021 - 2025)
- * imissfauna.com
- */
+/* uuuuuuuuuuuuuuu - Ceres Fauna (2021 - ) */

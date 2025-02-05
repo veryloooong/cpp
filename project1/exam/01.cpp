@@ -1,7 +1,11 @@
+#include <array>
 #include <chrono>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <queue>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -37,9 +41,48 @@ struct yn_tf : numpunct<char> {
 };
 
 void solve() {
-  int x, y;
-  cin >> x >> y;
-  cout << x + y;
+  int n, m, r, c;
+  cin >> n >> m >> r >> c;
+  vector<vector<int>> mt(n + 1, vector<int>(m + 1));
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= m; j++) {
+      cin >> mt[i][j];
+    }
+  }
+
+  const array<pair<int, int>, 4> dirs = {
+      make_pair(1, 0),
+      make_pair(0, 1),
+      make_pair(-1, 0),
+      make_pair(0, -1),
+  };
+
+  using state_t = tuple<int, int, int>;
+  queue<state_t> q;
+  vector<vector<bool>> visited(n + 1, vector<bool>(m + 1));
+
+  q.push(make_tuple(r, c, 0));
+  while (!q.empty()) {
+    const auto [x, y, steps] = q.front();
+    q.pop();
+
+    if (x < 1 || x > n || y < 1 || y > m) {
+      cout << steps << endl;
+      return;
+    }
+    if (mt[x][y] == 1)
+      continue;
+    if (visited[x][y])
+      continue;
+
+    visited[x][y] = true;
+    for (auto [dx, dy] : dirs) {
+      int nx = x + dx, ny = y + dy;
+      q.push(make_tuple(nx, ny, steps + 1));
+    }
+  }
+
+  cout << -1 << endl;
 }
 
 int main() {

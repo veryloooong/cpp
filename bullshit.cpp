@@ -1,13 +1,20 @@
-#include <cassert>
-#include <iostream>
+#include <cstdio>
 
-int &bruh(int &x) { return x; }
+using namespace std;
+
+inline int f(int x) {
+  static int a = 10;
+  return x = a;
+}
+
+void for_each(int *arr, int n, void (*func)(int &a)) {
+  for (int i = 0; i < n; i++) {
+    func(*(arr + i));
+  }
+}
 
 int main() {
-  int x = 5, y = 7;
-  int *p = &x;
-  int &r = x;
-  *p += 2;
-  y += r;
-  std::cout << x << ' ' << y << std::endl;
+  int x, y = 5, z = 10;
+  x = y++ + 2 * (y + z) + ++z;
+  printf(" x= %d y= %d  z= %d ", x, y, z);
 }
