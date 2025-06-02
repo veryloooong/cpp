@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 struct TreeNode {
   int val;
   TreeNode *left;
@@ -22,4 +20,19 @@ private:
   typedef uint64_t u64;
 
 public:
+  std::vector<int> applyOperations(std::vector<int> &nums) {
+    const int n = nums.size();
+    std::vector<int> ans(n);
+    for (int i = 0; i < n - 1; i++) {
+      if (nums[i] == nums[i + 1]) {
+        nums[i] *= 2;
+        nums[i + 1] = 0;
+      }
+    }
+    for (int i = 0, j = 0; i < n; i++) {
+      if (nums[i])
+        ans[j++] = nums[i];
+    }
+    return ans;
+  }
 };

@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 struct TreeNode {
   int val;
   TreeNode *left;
@@ -22,4 +20,23 @@ private:
   typedef uint64_t u64;
 
 public:
+  int numOfSubarrays(std::vector<int> &arr) {
+    constexpr int MOD = 1000000007;
+    const int n = arr.size();
+
+    i64 ans = 0;
+    std::vector<int> odds(n + 1), evens(n + 1);
+    for (int i = 1; i <= n; i++) {
+      if (arr[i - 1] & 1) {
+        evens[i] = odds[i - 1];
+        odds[i] = evens[i - 1] + 1;
+      } else {
+        evens[i] = evens[i - 1] + 1;
+        odds[i] = odds[i - 1];
+      }
+      ans = (ans + odds[i]) % MOD;
+    }
+
+    return ans;
+  }
 };

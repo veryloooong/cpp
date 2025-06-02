@@ -1,8 +1,9 @@
+#include <algorithm>
+#include <climits>
 #include <cstdint>
+#include <cstdlib>
 #include <string>
 #include <vector>
-
-using namespace std;
 
 struct TreeNode {
   int val;
@@ -22,4 +23,18 @@ private:
   typedef uint64_t u64;
 
 public:
+  int maxAbsoluteSum(std::vector<int> &nums) {
+    int min = 0;
+    int max = 0;
+    int current_min = 0;
+    int current_max = 0;
+    for (int num : nums) {
+      current_min = std::min(0, current_min + num);
+      current_max = std::max(0, current_max + num);
+      min = std::min(min, current_min);
+      max = std::max(max, current_max);
+    }
+
+    return std::max(std::abs(min), std::abs(max));
+  }
 };

@@ -1,8 +1,7 @@
 #include <cstdint>
 #include <string>
+#include <unordered_set>
 #include <vector>
-
-using namespace std;
 
 struct TreeNode {
   int val;
@@ -22,4 +21,24 @@ private:
   typedef uint64_t u64;
 
 public:
+};
+
+class FindElements {
+private:
+  std::unordered_set<int> values;
+
+  void recurse(TreeNode *node, int val) {
+    if (node == nullptr)
+      return;
+
+    values.insert(val);
+    node->val = val;
+    recurse(node->left, 2 * val + 1);
+    recurse(node->right, 2 * val + 2);
+  }
+
+public:
+  FindElements(TreeNode *root) { recurse(root, 0); }
+
+  bool find(int target) { return values.contains(target); }
 };
