@@ -1,5 +1,8 @@
 #include <cstdint>
+#include <functional>
+#include <queue>
 #include <string>
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -22,20 +25,21 @@ private:
   typedef uint64_t u64;
 
 public:
-  vector<int> lexicalOrder(int n) {
-    vector<int> ans;
-    ans.reserve(n);
-
-    int current = 1;
-    while ((int)ans.size() < n) {
-      ans.push_back(current);
-      if (current * 10 <= n) current *= 10;
+  string clearStars(string s) {
+    using pair_t = pair<char, int>;
+    priority_queue<pair_t, vector<pair_t>, greater<>> pq; // character, location
+    string ans = s;
+    
+    for (int i = 0, n = s.length(); i < n; i++) {
+      if (s[i] != '*') pq.push({s[i], -i});
       else {
-        while (current % 10 == 9 || current >= n) current /= 10;
-        current++;
+        const auto [_, pos] = pq.top(); pq.pop();
+        ans[-pos] = '*';
       }
     }
-    
+
+    std::erase(ans, '*');
+
     return ans;
   }
 };
