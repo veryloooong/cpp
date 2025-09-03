@@ -2,3 +2,5 @@ If:
   PathMatch: .*\.cpp
 Diagnostics:
   Suppress: [unused_includes]
+CompileFlags:
+  Add: [-std=c++20]

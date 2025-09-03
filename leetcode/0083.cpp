@@ -1,6 +1,4 @@
 #include <cstdint>
-#include <string>
-#include <vector>
 
 using namespace std;
 
@@ -30,4 +28,31 @@ private:
   typedef uint64_t u64;
 
 public:
+  ListNode *deleteDuplicates(ListNode *head) {
+    int current_value;
+    int previous_value = -101;
+    ListNode *current_node = nullptr;
+    ListNode *new_head = nullptr;
+
+    while (head) {
+      current_value = head->val;
+      head = head->next;
+
+      if (current_value != previous_value) {
+        ListNode *node = new ListNode(current_value);
+
+        if (!current_node) {
+          new_head = node;
+          current_node = new_head;
+        } else {
+          current_node->next = node;
+          current_node = current_node->next;
+        }
+      }
+
+      previous_value = current_value;
+    }
+
+    return new_head;
+  }
 };

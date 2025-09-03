@@ -29,7 +29,7 @@ public:
     auto cmp = [](const pq_val_t &a, const pq_val_t &b) {
       return a.first < b.first;
     };
-    std::priority_queue<pq_val_t, std::vector<pq_val_t>, decltype(cmp)> pq{};
+    std::priority_queue<pq_val_t, std::vector<pq_val_t>, decltype(cmp)> pq{cmp};
 
     for (int i = 0, n = classes.size(); i < n; i++) {
       const double p = classes[i][0];
